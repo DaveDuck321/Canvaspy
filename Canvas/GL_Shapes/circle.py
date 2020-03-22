@@ -1,9 +1,6 @@
 import ctypes
 
-from OpenGL import GL as gl
-from OpenGL.GL import shaders
-
-from Canvas.buffer import Buffer
+from Canvas.GL_Shapes.shape import Shape_GL
 
 
 BOUNDING_VERTICES = (ctypes.c_float * 12)(
@@ -69,73 +66,16 @@ void main() {
 """
 
 
-class Circle_GL():
+class Circle_GL(Shape_GL):
     def __init__(self):
-        self.program = shaders.compileProgram(
-            shaders.compileShader(vertex_shader, gl.GL_VERTEX_SHADER),
-            shaders.compileShader(fragment_shader, gl.GL_FRAGMENT_SHADER)
-        )
-        gl.glUseProgram(self.program)
+        super().__init__(vertex_shader, fragment_shader, BOUNDING_VERTICES)
 
-        self.vao = gl.glGenVertexArrays(1)
-        gl.glBindVertexArray(self.vao)
+        self._add_config_attrib("center", 3)
+        self._add_config_attrib("radii", 2)
+        self._add_config_attrib("colorFill", 4)
+        self._add_config_attrib("colorStroke", 4)
 
-        vertices = gl.glGenBuffers(1)
-        gl.glBindBuffer(gl.GL_ARRAY_BUFFER, vertices)
-        gl.glBufferData(
-            gl.GL_ARRAY_BUFFER,
-            ctypes.sizeof(BOUNDING_VERTICES),
-            BOUNDING_VERTICES,
-            gl.GL_STATIC_DRAW
-        )
-
-        positionAttr = gl.glGetAttribLocation(self.program, "position")
-        gl.glEnableVertexAttribArray(positionAttr)
-        gl.glVertexAttribPointer(
-            positionAttr, 2, gl.GL_FLOAT, gl.GL_FALSE,
-            2*ctypes.sizeof(ctypes.c_float), ctypes.c_void_p(0)
-        )
-
-        # Custom settings
-        self.configBuffer = Buffer(ctypes.c_float, 13)
-        self.glConfigBuffer = gl.glGenBuffers(1)
-        gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.glConfigBuffer)
-
-        centerAttr = gl.glGetAttribLocation(self.program, "center")
-        radiiAttr = gl.glGetAttribLocation(self.program, "radii")
-        colorFAttr = gl.glGetAttribLocation(self.program, "colorFill")
-        colorSAttr = gl.glGetAttribLocation(self.program, "colorStroke")
-
-        gl.glEnableVertexAttribArray(centerAttr)
-        gl.glEnableVertexAttribArray(radiiAttr)
-        gl.glEnableVertexAttribArray(colorFAttr)
-        gl.glEnableVertexAttribArray(colorSAttr)
-
-        gl.glVertexAttribDivisor(centerAttr, 1)
-        gl.glVertexAttribDivisor(radiiAttr, 1)
-        gl.glVertexAttribDivisor(colorFAttr, 1)
-        gl.glVertexAttribDivisor(colorSAttr, 1)
-
-        stride = (3+2+4+4) * ctypes.sizeof(ctypes.c_float)
-        gl.glVertexAttribPointer(
-            centerAttr, 3, gl.GL_FLOAT, gl.GL_FALSE,
-            stride, ctypes.c_void_p(0)
-        )
-        gl.glVertexAttribPointer(
-            radiiAttr, 2, gl.GL_FLOAT, gl.GL_FALSE,
-            stride, ctypes.c_void_p(3*ctypes.sizeof(ctypes.c_float))
-        )
-        gl.glVertexAttribPointer(
-            colorFAttr, 4, gl.GL_FLOAT, gl.GL_FALSE,
-            stride, ctypes.c_void_p(5*ctypes.sizeof(ctypes.c_float))
-        )
-        gl.glVertexAttribPointer(
-            colorSAttr, 4, gl.GL_FLOAT, gl.GL_FALSE,
-            stride, ctypes.c_void_p(9*ctypes.sizeof(ctypes.c_float))
-        )
-        self.u_window = gl.glGetUniformLocation(self.program, "window")
-
-        gl.glBindVertexArray(0)
+        self._finalise_config_attribs()
 
     def add(self, pos, radius, stroke_width, fill_color, stroke_color, zindex):
         self.configBuffer.push_row((
@@ -143,26 +83,3 @@ class Circle_GL():
             radius, stroke_width,
             *fill_color, *stroke_color
         ))
-
-    def render(self, window_size):
-        gl.glUseProgram(self.program)
-        gl.glUniform2f(self.u_window, *window_size)
-
-        gl.glBindVertexArray(self.vao)
-
-        gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.glConfigBuffer)
-
-        b_size, d_data = self.configBuffer.get_buffer()
-        gl.glBufferData(
-            gl.GL_ARRAY_BUFFER,
-            b_size,
-            d_data,
-            gl.GL_DYNAMIC_DRAW
-        )
-        gl.glDrawArraysInstanced(
-            gl.GL_TRIANGLES, 0, 6,
-            self.configBuffer.row_count()
-        )
-
-        gl.glBindVertexArray(0)
-        self.configBuffer.clear()

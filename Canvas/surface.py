@@ -2,9 +2,9 @@ from OpenGL import GL as gl
 
 from Canvas.GL_Shapes.rect import Rect_GL
 from Canvas.GL_Shapes.circle import Circle_GL
+from Canvas.GL_Shapes.line import Line_GL
 
 from itertools import count
-from random import random
 
 
 class Surface():
@@ -14,8 +14,9 @@ class Surface():
         self.counter = count(1)
         self.initgl()
 
-        self.rect_filler = Rect_GL()
-        self.circle_filler = Circle_GL()
+        self.line = Line_GL()
+        self.circle = Circle_GL()
+        self.rect = Rect_GL()
 
     def initgl(self):
         gl.glEnable(gl.GL_BLEND)
@@ -42,13 +43,8 @@ class Surface():
     def render(self):
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
 
-        for i in range(0, 10000):
-            self.rect_filler.add(
-                (random()*self.__width, random()*self.__height),
-                (100, 100), 3,
-                (0, 0, 0, 0.2), (1, 0, 0, 1),
-                0
-            )
-        self.rect_filler.render((self.__width, self.__height))
+        self.line.render((self.__width, self.__height))
+        self.circle.render((self.__width, self.__height))
+        self.rect.render((self.__width, self.__height))
 
         self.counter = count(1)
