@@ -66,6 +66,10 @@ class Shape_GL():
         raise NotImplementedError()
 
     def render(self, window_size):
+        b_size, d_data = self.configBuffer.get_buffer()
+        if b_size == 0:
+            return
+
         gl.glUseProgram(self.program)
         gl.glUniform2f(self.u_window, *window_size)
 
@@ -73,7 +77,6 @@ class Shape_GL():
 
         gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.glConfigBuffer)
 
-        b_size, d_data = self.configBuffer.get_buffer()
         gl.glBufferData(
             gl.GL_ARRAY_BUFFER,
             b_size,
