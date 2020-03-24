@@ -12,19 +12,19 @@ class Shape_GL():
         self.__config_size = 0
 
         self.__initgl(vertex_shader, fragment_shader, vertices)
-        self.u_window = gl.glGetUniformLocation(self.program, "window")
+        self.__u_window = gl.glGetUniformLocation(self.__program, "window")
 
     def __initgl(self, vertex_shader, fragment_shader, vertices):
-        self.program = shaders.compileProgram(
+        self.__program = shaders.compileProgram(
             shaders.compileShader(vertex_shader, gl.GL_VERTEX_SHADER),
             shaders.compileShader(fragment_shader, gl.GL_FRAGMENT_SHADER)
         )
-        gl.glUseProgram(self.program)
+        gl.glUseProgram(self.__program)
 
-        self.vao = gl.glGenVertexArrays(1)
-        gl.glBindVertexArray(self.vao)
+        self.__vao = gl.glGenVertexArrays(1)
+        gl.glBindVertexArray(self.__vao)
 
-        self.glConfigBuffer = gl.glGenBuffers(1)
+        self.__glConfigBuffer = gl.glGenBuffers(1)
         verticesBuffer = gl.glGenBuffers(1)
 
         gl.glBindBuffer(gl.GL_ARRAY_BUFFER, verticesBuffer)
@@ -35,7 +35,7 @@ class Shape_GL():
             gl.GL_STATIC_DRAW
         )
 
-        positionAttr = gl.glGetAttribLocation(self.program, "position")
+        positionAttr = gl.glGetAttribLocation(self.__program, "position")
         gl.glEnableVertexAttribArray(positionAttr)
         gl.glVertexAttribPointer(
             positionAttr, 2, gl.GL_FLOAT, gl.GL_FALSE,
@@ -43,7 +43,7 @@ class Shape_GL():
         )
 
     def _add_config_attrib(self, name, size):
-        location = gl.glGetAttribLocation(self.program, name)
+        location = gl.glGetAttribLocation(self.__program, name)
         gl.glEnableVertexAttribArray(location)
         gl.glVertexAttribDivisor(location, 1)
 
@@ -52,7 +52,7 @@ class Shape_GL():
 
     def _finalise_config_attribs(self):
         pointer = 0
-        gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.glConfigBuffer)
+        gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.__glConfigBuffer)
         for location, size in self.__config_attribs:
             gl.glVertexAttribPointer(
                 location, size, gl.GL_FLOAT, gl.GL_FALSE,
@@ -60,22 +60,22 @@ class Shape_GL():
             )
             pointer += size
 
-        self.configBuffer = Buffer(c_float, pointer)
+        self._configBuffer = Buffer(c_float, pointer)
 
     def add(self):
         raise NotImplementedError()
 
     def render(self, window_size):
-        b_size, d_data = self.configBuffer.get_buffer()
+        b_size, d_data = self._configBuffer.get_buffer()
         if b_size == 0:
             return
 
-        gl.glUseProgram(self.program)
-        gl.glUniform2f(self.u_window, *window_size)
+        gl.glUseProgram(self.__program)
+        gl.glUniform2f(self.__u_window, *window_size)
 
-        gl.glBindVertexArray(self.vao)
+        gl.glBindVertexArray(self.__vao)
 
-        gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.glConfigBuffer)
+        gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.__glConfigBuffer)
 
         gl.glBufferData(
             gl.GL_ARRAY_BUFFER,
@@ -85,8 +85,8 @@ class Shape_GL():
         )
         gl.glDrawArraysInstanced(
             gl.GL_TRIANGLES, 0, 6,
-            self.configBuffer.row_count()
+            self._configBuffer.row_count()
         )
 
         gl.glBindVertexArray(0)
-        self.configBuffer.clear()
+        self._configBuffer.clear()

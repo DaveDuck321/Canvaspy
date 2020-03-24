@@ -79,7 +79,7 @@ class Rect_GL(Shape_GL):
         self._finalise_config_attribs()
 
     def add(self, pos, size, stroke_width, fill_color, stroke_color, zindex):
-        self.configBuffer.push_row((
+        self._configBuffer.push_row((
             *pos, zindex,
             *size, stroke_width,
             *fill_color, *stroke_color

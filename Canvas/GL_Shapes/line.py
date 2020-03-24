@@ -64,7 +64,7 @@ class Line_GL(Shape_GL):
         self._finalise_config_attribs()
 
     def add(self, start, end, width, color):
-        self.configBuffer.push_row((
+        self._configBuffer.push_row((
             *start, *end,
             width, *color
         ))

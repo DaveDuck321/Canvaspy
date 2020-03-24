@@ -78,7 +78,7 @@ class Circle_GL(Shape_GL):
         self._finalise_config_attribs()
 
     def add(self, pos, radius, stroke_width, fill_color, stroke_color, zindex):
-        self.configBuffer.push_row((
+        self._configBuffer.push_row((
             *pos, zindex,
             radius, stroke_width,
             *fill_color, *stroke_color
