@@ -55,13 +55,12 @@ in vec4 fragColorS;
 out vec4 color;
 void main() {
     float r = length(toCenter);
-    if(r <= fragRadii.x) {
-        if(r >= fragRadii.x-fragRadii.y)
-            color = fragColorS;
-        else
-            color = fragColorF;
-    } else
-        color = vec4(0, 0, 0, 0);
+    if(r > fragRadii.x)
+        discard;
+    if(r >= fragRadii.x-fragRadii.y)
+        color = fragColorS;
+    else
+        color = fragColorF;
 }
 """
 
