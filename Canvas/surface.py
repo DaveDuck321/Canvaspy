@@ -29,6 +29,7 @@ class Surface():
 
     def resize(self, window_size):
         self.__width, self.__height = window_size
+        self.aa.resize(*window_size)
         gl.glViewport(0, 0, self.__width, self.__height)
 
     def add_line(self, start, end):

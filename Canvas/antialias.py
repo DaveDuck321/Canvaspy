@@ -36,6 +36,16 @@ class Antialias():
         # Bind window back to framebuffer
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0)
 
+    def resize(self, width, height):
+        self.__width, self.__height = width, height
+        gl.glBindTexture(gl.GL_TEXTURE_2D, self.screen_tex)
+        gl.glTexImage2D(
+            gl.GL_TEXTURE_2D,
+            0, gl.GL_RGB,
+            2*self.__width, 2*self.__height,
+            0, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, None
+        )
+
     def start(self):
         gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, self.framebuffer)
         # Correct viewport size for drawing
