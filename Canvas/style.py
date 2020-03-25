@@ -19,15 +19,12 @@ def convert_color(color):
                     range(0, len(color), 2)
                 )
             ))
-    raise ValueError("Invalid color")
+    raise TypeError("Invalid color", color)
 
 
 class Style():
-    def __init__(self, color=(0, 0, 0)):
-        self.__color = color
-
-    def __hash__(self):
-        return 0
+    def __init__(self, color):
+        self.color = color
 
     @property
     def color(self):
@@ -38,11 +35,17 @@ class Style():
         self.__color = convert_color(color)
 
 
-BLACK = Style((0, 0, 0))
-WHITE = Style((1, 1, 1))
-RED = Style((1, 0, 0))
-GREEN = Style((0, 1, 0))
-BLUE = Style((0, 0, 1))
-CYAN = Style((0, 1, 1))
-YELLOW = Style((1, 1, 0))
-MAGENTA = Style((1, 0, 1))
+class FillStyle(Style):
+    def __init__(self, color):
+        super().__init__(color)
+
+
+class StrokeStyle(Style):
+    def __init__(self, color, width=1):
+        self.width = width
+        super().__init__(color)
+
+
+LineStyle = StrokeStyle
+
+BLACK_STROKE = StrokeStyle((0, 0, 0), 1)

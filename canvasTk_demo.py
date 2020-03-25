@@ -4,8 +4,7 @@ import tkinter
 from pyopengltk import OpenGLFrame
 
 from Canvas.surface import Surface
-from Canvas import style
-from Canvas.settings import Settings
+from Canvas.style import StrokeStyle, FillStyle, LineStyle
 
 
 class Canvas(OpenGLFrame):
@@ -14,8 +13,6 @@ class Canvas(OpenGLFrame):
         super(Canvas, self).__init__(root, **kwargs)
 
     def initgl(self):
-        """Initalize gl states when the frame is created"""
-        print("Ran init")
         if self.surface is None:
             self.surface = Surface((self.width, self.height))
 
@@ -23,8 +20,6 @@ class Canvas(OpenGLFrame):
         self.nframes = 0
 
     def redraw(self):
-        """Render a single frame"""
-        # self.surface.add_rect((0, 0), (0.5, 0.5), Settings(fill=style.BLACK))
         self.surface.render()
 
         tm = time.time() - self.start
@@ -37,20 +32,16 @@ class Canvas(OpenGLFrame):
             self.surface.resize((self.width, self.height))
 
     # Drawing shapes
-    def draw_line(self, pos1, pos2, settings=Settings(fill=style.BLACK)):
+    def draw_line(self, pos1, pos2):
         raise NotImplementedError()
 
-    def draw_rect(self, pos, size, settings=Settings(fill=style.BLACK)):
+    def draw_rect(self, pos, size):
         raise NotImplementedError()
 
-    def draw_circle(self, pos, r, settings=Settings(fill=style.BLACK)):
+    def draw_circle(self, pos, r):
         raise NotImplementedError()
 
-    def draw_arc(
-        self, pos, r, start_angle, end_angle,
-        clockwise=True,
-        settings=Settings(fill=style.BLACK)
-    ):
+    def draw_arc(self, pos, r, start_angle, end_angle, clockwise=True):
         pass
 
     # Drawing text
@@ -66,4 +57,14 @@ if __name__ == '__main__':
     app = Canvas(root, width=500, height=500)
     app.pack(fill=tkinter.BOTH, expand=tkinter.YES)
     app.animate = 1
-    app.mainloop()
+
+    while 1:
+        app.update()
+        app.update_idletasks()
+
+        app.surface.add_rect(
+            (20, 20), (100, 100),
+            FillStyle("#fff"), StrokeStyle("#000", 1)
+        )
+        app.surface.add_circle((400, 400), 50, "#fff", StrokeStyle("#000"))
+        app.surface.add_line((20, 20), (400, 400), LineStyle("#000", 5))

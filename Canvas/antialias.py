@@ -53,7 +53,7 @@ class Antialias():
         gl.glClear(gl.GL_COLOR_BUFFER_BIT)
 
     def finalize(self):
-        # Push from multibuffer to buffer
+        # Push from framebuffer to screen
         gl.glBindFramebuffer(gl.GL_DRAW_FRAMEBUFFER, 0)
         gl.glBindFramebuffer(gl.GL_READ_FRAMEBUFFER, self.framebuffer)
 

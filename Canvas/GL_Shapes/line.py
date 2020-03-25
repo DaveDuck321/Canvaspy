@@ -2,7 +2,6 @@ import ctypes
 
 from Canvas.GL_Shapes.shape import Shape_GL
 
-
 LINE_VERTICES = (ctypes.c_float * 12)(
     0, -1,
     0, 1,

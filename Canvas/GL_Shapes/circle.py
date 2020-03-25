@@ -2,7 +2,6 @@ import ctypes
 
 from Canvas.GL_Shapes.shape import Shape_GL
 
-
 BOUNDING_VERTICES = (ctypes.c_float * 12)(
     -1, -1,
     -1, 1,

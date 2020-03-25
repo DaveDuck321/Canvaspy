@@ -12,8 +12,6 @@ def main():
     )
     sdl2.SDL_GL_SetAttribute(sdl2.SDL_GL_DOUBLEBUFFER, 1)
     sdl2.SDL_GL_SetAttribute(sdl2.SDL_GL_DEPTH_SIZE, 24)
-    sdl2.SDL_GL_SetAttribute(sdl2.SDL_GL_MULTISAMPLEBUFFERS, 1)
-    sdl2.SDL_GL_SetAttribute(sdl2.SDL_GL_MULTISAMPLESAMPLES, 4)
     sdl2.SDL_GL_SetSwapInterval(1)
 
     DISPLAY_DIMENSIONS = (640, 480)
@@ -32,6 +30,10 @@ def main():
         while sdl2.SDL_PollEvent(ctypes.byref(event)) != 0:
             if event.type == sdl2.SDL_QUIT:
                 running = False
+
+        surface.add_rect((20, 20), (100, 100))
+        surface.add_circle((400, 400), 50)
+        surface.add_line((20, 20), (400, 400))
 
         surface.render()
         sdl2.SDL_GL_SwapWindow(window)
