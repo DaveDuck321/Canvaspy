@@ -52,11 +52,12 @@ class Shape_GL():
 
     def _finalise_config_attribs(self):
         pointer = 0
+        float_size = sizeof(c_float)
         gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.__glConfigBuffer)
         for location, size in self.__config_attribs:
             gl.glVertexAttribPointer(
                 location, size, gl.GL_FLOAT, gl.GL_FALSE,
-                self.__config_size, c_void_p(pointer*sizeof(c_float))
+                self.__config_size*float_size, c_void_p(pointer*float_size)
             )
             pointer += size
 

@@ -66,5 +66,5 @@ if __name__ == '__main__':
             (20, 20), (100, 100),
             FillStyle("#fff"), StrokeStyle("#000", 1)
         )
-        app.surface.add_circle((400, 400), 50, "#fff", StrokeStyle("#000"))
+        app.surface.add_circle((400, 400), 50, (1, 0, 1, 1), StrokeStyle("#000"))
         app.surface.add_line((20, 20), (400, 400), LineStyle("#000", 5))
